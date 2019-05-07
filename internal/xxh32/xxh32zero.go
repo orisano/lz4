@@ -91,13 +91,7 @@ func (xxh *XXHZero) Write(input []byte) (int, error) {
 		xxh.bufused = 0
 	}
 
-	for n := n - 16; p <= n; p += 16 {
-		sub := input[p:][:16] //BCE hint for compiler
-		v1 = rol13(v1+binary.LittleEndian.Uint32(sub[:])*prime32_2) * prime32_1
-		v2 = rol13(v2+binary.LittleEndian.Uint32(sub[4:])*prime32_2) * prime32_1
-		v3 = rol13(v3+binary.LittleEndian.Uint32(sub[8:])*prime32_2) * prime32_1
-		v4 = rol13(v4+binary.LittleEndian.Uint32(sub[12:])*prime32_2) * prime32_1
-	}
+	p, v1, v2, v3, v4 = hashBlocks(input, int64(p), int64(n-16), v1, v2, v3, v4)
 	xxh.v1, xxh.v2, xxh.v3, xxh.v4 = v1, v2, v3, v4
 
 	copy(xxh.buf[xxh.bufused:], input[p:])
